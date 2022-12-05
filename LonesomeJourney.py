@@ -16,6 +16,7 @@ class Player:
 		self.hp = 20
 		self.money = 0
 
+
 	#Inventory Operations:
 	def search_weapon(self, weapon_match):
 		for index in self.weapons:
@@ -43,6 +44,7 @@ class Player:
 			if self.hp <= 0:
 				print(f'You have been defeated by the {monster.get_name()}')
 				self.death()
+
 
 	def restore_hp(self):
 		print(f'{self.name}s HP has been restored')
@@ -103,6 +105,7 @@ class Player:
 			print(Fore.RED, "No armor acquired yet!", Style.RESET_ALL)
 		print('')
 
+
 	def print_items(self):
 		if self.items:
 			print("Items: ")
@@ -112,9 +115,11 @@ class Player:
 			print(Fore.RED, "No items acquired yet!", Style.RESET_ALL)
 		print('')
 
+
 	def print_hp(self):
 		print(Fore.GREEN, f'hp: {self.hp}', Style.RESET_ALL)
 		print('')
+
 
 	def print_money(self):
 		print(Fore.GREEN, f'Money: {self.money}', Style.RESET_ALL)
@@ -131,14 +136,18 @@ class Monster:
 		self.hp = hp
 		self.dmg = dmg
 
+
 	def get_name(self):
 		return self.name
+
 
 	def get_hp(self):
 		return self.hp
 
+
 	def get_dmg(self):
 		return self.dmg
+
 
 	def lower_hp(self, incoming_damage, player):
 		random_num = randint(1,5)
@@ -150,8 +159,10 @@ class Monster:
 			if self.hp <= 0:
 				self.death()
 
+
 	def death(self):
 		print(f'{self.name} has been defeated')
+
 
 	def __str__(self):
 		return f'{self.name}s HP: {self.hp}'
@@ -161,12 +172,15 @@ class Weaponry:
 	def __init__(self, name, dmg):
 		self.name = name
 		self.dmg = dmg
-	
+
+
 	def get_name(self):
 		return self.name
 
+
 	def get_dmg(self):
 		return self.dmg
+
 
 	def __str__(self):
 		return f' + {self.name}: {self.dmg} dmg'
@@ -187,6 +201,8 @@ class Menu:
 				print(Fore.RED + f'WRONG INPUT! {Style.RESET_ALL}')
 				print("Instructions: Enter '1' for North, Enter '2' for South")
 				direction_choice1 = int(input("Which direction would you like to go?: "))
+
+
 			if direction_choice1 == 1:
 				print(f'You have entered the {dir1}')
 			elif direction_choice1 == 2:
@@ -283,6 +299,7 @@ def main():
 	print(Style.RESET_ALL) 
 	print('')
 
+
 	#Exception handling for 'ready' input to ensure the player enters it correctly.
 	first_fight_flag = 0
 	while first_fight_flag == 0:
@@ -295,6 +312,7 @@ def main():
 			first_fight = input("Type 'ready' to enter your first battle: ")
 			if first_fight == 1:
 				first_fight_flag = 1
+
 
 	if first_fight == 'ready':
 		weak_goblin = Monster("Weak Goblin", 6, 2)
@@ -322,6 +340,7 @@ def main():
 		#Leads to village where you can buy items.
 		main_menu.open_inventory(new_player)
 
+
 	elif direction_choice == 2:
 		piranha = Monster("Piranha", 8, 3)
 		print("Kyle: WHOAAAAH")
@@ -336,7 +355,6 @@ def main():
 		print(Style.RESET_ALL) 
 		#Take boat on river that leads to mountain village.
 		main_menu.open_inventory(new_player)
-
 
 
 if __name__ == "__main__":
