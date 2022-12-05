@@ -3,7 +3,6 @@
 #On his way home he has to get across many obstacles from fighting dragons to crossing a river.
 
 
-import colorama
 from colorama import Fore, Style
 from random import randint
 
@@ -17,23 +16,22 @@ class Player:
 		self.hp = 20
 		self.money = 0
 
-	def get_name(self):
-		return self.name
-
-	def get_hp(self):
-		return self.hp
-	
-	def set_weapon(self, new_weapon):
-		self.weapons.append(new_weapon)
-
-	def set_armory(self, new_armor):
-		self.armory.append(new_armor)
-
+	#Inventory Operations:
 	def search_weapon(self, weapon_match):
 		for index in self.weapons:
 			if index.get_name() == weapon_match:
 				return index
 
+
+	def set_weapon(self, new_weapon):
+		self.weapons.append(new_weapon)
+
+
+	def set_armory(self, new_armor):
+		self.armory.append(new_armor)
+
+
+	#HP operations:
 	def lower_hp(self, incoming_damage, monster):
 		random_num = randint(1,5)
 		if random_num == 1:
@@ -46,23 +44,82 @@ class Player:
 				print(f'You have been defeated by the {monster.get_name()}')
 				self.death()
 
-	def gain_money(self, money):
-		self.money += money
+	def restore_hp(self):
+		print(f'{self.name}s HP has been restored')
+		self.hp = 20
 
-	def lose_money(self, money):
-		self.money -= money
 
-	def get_money(self):
-		return self.money
+	def get_hp(self):
+		return self.hp
+
 
 	def death(self):
 		print(f'{self.name} has died')
 		print("Game Over!")
 		exit()
 
-	def restore_hp(self):
-		print(f'{self.name}s HP has been restored')
-		self.hp = 20
+
+	#Money operations:
+	def gain_money(self, money):
+		self.money += money
+
+
+	def lose_money(self, money):
+		self.money -= money
+
+
+	def get_money(self):
+		return self.money
+	
+	#Miscellaneous operations:	
+	def get_name(self):
+		return self.name
+
+	def get_items(self):
+		return self.items
+
+
+	#Display methods:
+	def print_name(self):
+		print(f'Name: {self.name}')
+
+
+	def print_weapons(self):
+		if self.weapons:
+			print("Weapons:")
+			for index in self.weapons:
+				print(Fore.GREEN, index, Style.RESET_ALL, end=', ',)
+		else:
+			print(Fore.RED, "No weapons acquired yet!", Style.RESET_ALL)
+		print('')
+
+
+	def print_armory(self):
+		if self.armory:
+			print("Armory: ")
+			for index in self.armory:
+				print(Fore.GREEN, index, Style.RESET_ALL, end=', ')
+		else:
+			print(Fore.RED, "No armor acquired yet!", Style.RESET_ALL)
+		print('')
+
+	def print_items(self):
+		if self.items:
+			print("Items: ")
+			for index in self.items:
+				print(Fore.GREEN, index, Style.RESET_ALL, end=', ')
+		else:
+			print(Fore.RED, "No items acquired yet!", Style.RESET_ALL)
+		print('')
+
+	def print_hp(self):
+		print(Fore.GREEN, f'hp: {self.hp}', Style.RESET_ALL)
+		print('')
+
+	def print_money(self):
+		print(Fore.GREEN, f'Money: {self.money}', Style.RESET_ALL)
+		print('')
+
 
 	def __str__(self):
 		return f'{self.name}s HP: {self.hp}'
@@ -142,7 +199,8 @@ class Menu:
 		run = 'no'
 		while(player.get_hp() > 0 and monster.get_hp() > 0 and run == 'no'):
 			print(Fore.RED + f'1| Attack {monster.get_name()}')	
-			print(f'2| Run Away {Style.RESET_ALL}')
+			print(f'2| Use item')	
+			print(f'3| Run Away {Style.RESET_ALL}')
 			first_fight_option = int(input("What would you like to do?: "))
 			if first_fight_option == 1:
 				monster.lower_hp(player.search_weapon("Battered Sword").get_dmg(), player)
@@ -156,10 +214,60 @@ class Menu:
 					print(f'You have gained ${battle_value}')
 					player.gain_money(battle_value)
 					player.restore_hp()
-			
-			if first_fight_option == 2:
+
+
+			if first_fight_option == 2:	
+				if player.get_items():
+					player.print_items()
+					item_grab = input("Type the name of the item you would like to use: ")
+					item_to_use = player.search_item(item_grab)
+					if item_to_use == 'potion':
+						player.restore_hp()
+					if monster.get_hp() > 0:
+						player.lower_hp(monster.get_dmg(), monster)
+					print("Battle stats:")
+					print(Fore.GREEN, monster)
+					print(f' {player} {Style.RESET_ALL}')
+					print('')
+				else:
+					print(Fore.BLUE, "You have no useable items!", Style.RESET_ALL)
+					print('')
+
+
+			if first_fight_option == 3:
 				run = 'yes'
 				print(Fore.RED, "You have escaped!, but you are a coward for avoiding your first battle!" + Style.RESET_ALL)
+
+
+	def open_inventory(self, player):
+		open_inventory_check = input("Would you like to open your inventory? (yes or no): ")
+		while open_inventory_check == 'yes':
+			print("Here are your options: ")
+			print("1| View weapons")
+			print("2| View armory")
+			print("3| View items")
+			print("4| View money")
+			print("5| Exit")
+			check_inventory = int(input("Choose an option: "))
+			if check_inventory == 1:
+				player.print_weapons()
+				print('')
+			if check_inventory == 2:
+				player.print_armory()
+				print('')
+			if check_inventory == 3:
+				player.print_items()
+				print('')
+			if check_inventory == 4:
+				player.print_money()
+				print('')
+			if check_inventory == 5:
+				open_inventory_check = 'no'
+
+
+		if open_inventory_check == 'no':
+			pass	
+
 
 def main():
 	main_menu = Menu()
@@ -212,6 +320,8 @@ def main():
 		print(Fore.GREEN, new_player.search_weapon("Grass Sword"))
 		print(Style.RESET_ALL) 
 		#Leads to village where you can buy items.
+		main_menu.open_inventory(new_player)
+
 	elif direction_choice == 2:
 		piranha = Monster("Piranha", 8, 3)
 		print("Kyle: WHOAAAAH")
@@ -225,6 +335,8 @@ def main():
 		print(Fore.BLUE, new_player.search_weapon("Water Sword"))
 		print(Style.RESET_ALL) 
 		#Take boat on river that leads to mountain village.
+		main_menu.open_inventory(new_player)
+
 
 
 if __name__ == "__main__":
